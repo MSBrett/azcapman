@@ -3,8 +3,10 @@ This repo contains best practices and helper code for managing quota in Azure.
 
 ## Request new quota
 Quota is granted regionally.  Access to availability zones is requested separately.
-- Regional Quota : [Request quota increase via Support API | Microsoft Learn](https://learn.microsoft.com/en-us/rest/api/support/quota-payload)  
-- Zonal Access : [Azure region access request process - Azure | Microsoft Learn](https://learn.microsoft.com/en-us/troubleshoot/azure/general/region-access-request-process#reserved-access-regions)
+- Query             : [Resource Skus – List (customer will just see the Region/Zone not available for the sub)](https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list?tabs=Go)
+- Quota API         : [Azure Quota REST API Reference | Microsoft Learn](https://learn.microsoft.com/en-us/rest/api/reserved-vm-instances/quotaapi)
+- Service Request   : [Request quota increase via Support API | Microsoft Learn](https://learn.microsoft.com/en-us/rest/api/support/quota-payload)  
+- Zonal Access      : [Azure region access request process - Azure | Microsoft Learn](https://learn.microsoft.com/en-us/troubleshoot/azure/general/region-access-request-process#reserved-access-regions)
 
 
 ## APIs for requesting Quota via a Service Request.
