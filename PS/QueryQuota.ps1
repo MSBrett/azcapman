@@ -9,7 +9,7 @@ param (
     $Locations = @('westus', `
             'westus2', `
             'westus3'),
-    $SubscriptionIds = @('00000000-0000-0000-0000-000000000000') #Replace 00000000-0000-0000-0000-000000000000 with your Subscription ID
+    $SubscriptionIds = @('00000000-0000-0000-0000-000000000000') #Replace 00000000-0000-0000-0000-000000000000 with Subscription ID
 )
 
 $filteredSkus = @()
