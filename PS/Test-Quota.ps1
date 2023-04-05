@@ -9,7 +9,7 @@ param (
     $Locations = @('westus', `
             'westus2', `
             'westus3'),
-    $SubscriptionIds = @('cab7feeb-759c-478a-ade6-9326db0651ff')
+    $SubscriptionIds = @('00000000-0000-0000-0000-000000000000')
 )
 
 $filteredSkus = @()
