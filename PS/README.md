@@ -1,7 +1,22 @@
 # Powershell Scripts for Managing Quota  
 
-## Query existing quota:
+The QueryQuota.ps1 script can be run to determine the current state of the available and comsumed quota for a list of subscriptions and SKUs. 
+Review the parameter block of the script for more details.
+The script will output the following information:
 
+|SubscriptionId|SubscriptionName|Name|Location|CoresUsed|CoresTotal|Zones|RestrictedZones|RestrictedRegion|
+|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+|...|...|Standard_D2s_v5|GermanyWestCentral|0|100|2,3,1|1,2,3|True|
+|...|...|Standard_E2s_v5|GermanyWestCentral|0|100|2,3,1|1,2,3|True|
+|...|...|Standard_F2s_v2|GermanyWestCentral|0|100|2,3,1|1,2,3|True|
+|...|...|Standard_D2s_v5|GermanyNorth|||||True|
+|...|...|Standard_E2s_v5|GermanyNorth|||||True|
+|...|...|Standard_F2s_v2|GermanyNorth|||||True|
+|...|...|Standard_D2s_v5|westus2|0|100|1,3,2|1,2,3|True|
+|...|...|Standard_E2s_v5|westus2|0|100|1,3,2|1,2,3|True|
+|...|...|Standard_F2s_v2|westus2|0|100|1,3,2|1,2,3|False|
+
+## Query existing quota:
 ```
 $Location = 'West US 2'
 $VMSize = 'Standard_D4d_v4'
