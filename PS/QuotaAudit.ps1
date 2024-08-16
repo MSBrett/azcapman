@@ -1,9 +1,9 @@
 
 
 param(
-    [string]$meterDataUri="https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv",
-    [string]$tenantId=(Get-AzContext).Tenant.Id,
-    [string]$outputFile="ZoneInfo.csv"
+    [string]$meterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv",
+    [string]$tenantId = (Get-AzContext).Tenant.Id,
+    [string]$outputFile = "ZoneInfo.csv"
 )
 
 $ErrorActionPreference = 'Continue'
@@ -17,12 +17,11 @@ $csvHeaderString | Out-File -Force -FilePath .\$outputFile
 $meterData = Get-Content $meterDataFile | ConvertFrom-Csv
 $vmSkus = $meterData | Select-Object -Property NormalizedSKU -Unique | Where-Object { $_.NormalizedSKU -notlike "*sql*" }
 $subscriptions = Get-AzSubscription -tenantId $tenantId
-$locations = Get-AzLocation | Where-Object {$_.RegionType -eq 'Physical' -and $_.PhysicalLocation -ne "" -and $_.Location} | Sort-Object -Property Location
-foreach ($subscription in $subscriptions)
-{
+$locations = Get-AzLocation | Where-Object { $_.RegionType -eq 'Physical' -and $_.PhysicalLocation -ne "" -and $_.Location } | Sort-Object -Property Location
+foreach ($subscription in $subscriptions) {
     Set-AzContext -SubscriptionId $Subscription.Id -Tenant $tenantId | out-null
     if ((Get-AzResourceProvider -ListAvailable | Where-Object { $_.ProviderNamespace -like 'Microsoft.Capacity' }).RegistrationState -notlike 'Registered') {
-        try{
+        try {
             Register-AzResourceProvider -ProviderNamespace Microsoft.Capacity
         }
         catch {
@@ -31,13 +30,11 @@ foreach ($subscription in $subscriptions)
     }
 
     Write-Host ("Querying Subscription: {0}" -f $Subscription.Name)
-    foreach ($Location in $Locations)
-    {
+    foreach ($Location in $Locations) {
         Write-Host -NoNewline ("    Querying Region: {0}" -f $Location.DisplayName)
         $computeSKUs = Get-AzComputeResourceSku -Location $Location.Location -ErrorAction SilentlyContinue | Where-Object { $_.ResourceType -eq 'virtualMachines' }
         $vmUsage = Get-AZVMUsage -Location $Location.Location -ErrorAction SilentlyContinue
-        foreach ($vmSku in $vmSkus)
-        {
+        foreach ($vmSku in $vmSkus) {
             Write-Host -NoNewline "."
             $filteredSku = $computeSKUs | Where-Object { $_.Name.ToLowerInvariant() -eq $vmSku.NormalizedSKU.ToLowerInvariant() -and $_.LocationInfo.Location -like $Location.Location }
             $skuUsage = $vmUsage | Select-Object -ExpandProperty Name -Property CurrentValue, Limit | Where-Object { $_.Value -eq $filteredSku.Family }
@@ -46,17 +43,17 @@ foreach ($subscription in $subscriptions)
             }
             
             $auditedSku = [PSCustomObject]@{
-                TenantId            = $Subscription.TenantId
-                SubscriptionId      = $Subscription.Id
-                SubscriptionName    = $Subscription.Name
-                Location            = $Location.DisplayName
-                Family              = $skuUsage.LocalizedValue
-                Size                = $filteredSku.Name
-                RegionRestricted    = 'False'
-                ZonesPresent        = ($filteredSku.LocationInfo.Zones -join ",")
-                ZonesRestricted     = ''
-                CoresUsed           = $skuUsage.CurrentValue
-                CoresTotal          = $skuUsage.Limit
+                TenantId         = $Subscription.TenantId
+                SubscriptionId   = $Subscription.Id
+                SubscriptionName = $Subscription.Name
+                Location         = $Location.DisplayName
+                Family           = $skuUsage.LocalizedValue
+                Size             = $filteredSku.Name
+                RegionRestricted = 'False'
+                ZonesPresent     = ($filteredSku.LocationInfo.Zones -join ",")
+                ZonesRestricted  = ''
+                CoresUsed        = $skuUsage.CurrentValue
+                CoresTotal       = $skuUsage.Limit
             }
 
             foreach ($restriction in $filteredSku.Restrictions) {
@@ -67,13 +64,11 @@ foreach ($subscription in $subscriptions)
                     $auditedSku.RegionRestricted = 'True'
                 }
             }
-            #$auditedSkus += $auditedSku
+
             $auditedSku | ConvertTo-Csv -NoHeader | Out-File -Force -Append -FilePath .\$outputFile
         }
         Write-Host ""
     }
 }
 
-#Write-Host ("Saving {0} rows to {1}" -f $auditedSkus.Count, $outputFile)
-#$auditedSkus | Select-Object TenantId, SubscriptionId, SubscriptionName, Name, Location, CoresUsed, CoresTotal, Zones, RestrictedZones, RestrictedRegion | Export-Csv -force .\$outputFile
 Get-Content .\$outputFile | ConvertFrom-Csv | Format-Table -AutoSize
