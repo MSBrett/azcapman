@@ -3,7 +3,7 @@
 param(
     [string]$meterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv",
     [string]$tenantId = (Get-AzContext).Tenant.Id,
-    [string]$outputFile = "ZoneInfo.csv"
+    [string]$outputFile = "QuotaAudit.csv"
 )
 
 $ErrorActionPreference = 'Continue'
@@ -71,4 +71,4 @@ foreach ($subscription in $subscriptions) {
     }
 }
 
-Get-Content .\$outputFile | ConvertFrom-Csv | Format-Table -AutoSize
+Write-Host ("Audit Complete. Output written to: {0}" -f $outputFile)
