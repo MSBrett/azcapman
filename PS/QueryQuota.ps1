@@ -28,7 +28,12 @@ foreach ($SubscriptionId in $SubscriptionIds) {
 
         Select-AzSubscription -Subscription $SubscriptionId | out-null
         if ((Get-AzResourceProvider -ListAvailable | Where-Object { $_.ProviderNamespace -like 'Microsoft.Capacity' }).RegistrationState -notlike 'Registered') {
-            Register-AzResourceProvider -ProviderNamespace Microsoft.Capacity
+            try {
+                Register-AzResourceProvider -ProviderNamespace Microsoft.Capacity
+            }
+            catch {
+                Write-Host ("Failed Registering Resource Provider: Microsoft.Capacity") -ForegroundColor Yellow
+            }
         }
 
         Write-Host ("Querying Subscription: {0}" -f $Subscription.Name)
