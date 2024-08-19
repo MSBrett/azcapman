@@ -2,6 +2,11 @@
 
 The QueryQuota.ps1 script can be run to determine the current state of the available and comsumed quota for a list of subscriptions and SKUs. 
 Review the parameter block of the script for more details.
+
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MSBrett/azcapman/main/PS/QueryQuota.ps1" -OutFile "QueryQuota.ps1"; .\QueryQuota.ps1 -SKUs @('Standard_D2s_v5', 'Standard_E2s_v5', 'Standard_F2s_v2') -Families @('standardDSv5Family', 'standardLSv3Family', 'standardFSv2Family') -Locations @('GermanyWestCentral','GermanyNorth','westus2') -SubscriptionIds (Get-AzSubscription -TenantId ((Get-AzContext).Tenant.TenantId) | Select-Object SubscriptionId).SubscriptionId
+```
+
 The script will output the following information:
 
 |SubscriptionId|SubscriptionName|Name|Location|CoresUsed|CoresTotal|Zones|RestrictedZones|RestrictedRegion|
