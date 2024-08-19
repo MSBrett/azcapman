@@ -26,7 +26,7 @@ foreach ($SubscriptionId in $SubscriptionIds) {
             Throw 
         }
 
-        Select-AzSubscription -Subscription $SubscriptionId | out-null
+        Select-AzSubscription -Subscription $SubscriptionId -ErrorAction SilentlyContinue | out-null
         if ((Get-AzResourceProvider -ListAvailable | Where-Object { $_.ProviderNamespace -like 'Microsoft.Capacity' }).RegistrationState -notlike 'Registered') {
             try {
                 Register-AzResourceProvider -ProviderNamespace Microsoft.Capacity
