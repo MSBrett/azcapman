@@ -6,7 +6,7 @@ param(
     [string]$outputFile = "QuotaAudit.csv"
 )
 
-$ErrorActionPreference = 'Continue'
+$ErrorActionPreference = 'Stop'
 $VerbosePreference = 'SilentlyContinue'
 
 $csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal"

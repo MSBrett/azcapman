@@ -15,6 +15,9 @@ param (
     $SubscriptionIds = @('00000000-0000-0000-0000-000000000000') # '00000000-0000-0000-0000-000000000000' is a placeholder for your subscription IDs
 )
 
+$ErrorActionPreference = 'Stop'
+$VerbosePreference = 'SilentlyContinue'
+
 $filteredSkus = @()
 foreach ($SubscriptionId in $SubscriptionIds) {
     try {
