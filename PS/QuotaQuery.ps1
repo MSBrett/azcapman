@@ -1,16 +1,39 @@
 [CmdletBinding()]
 param (
-    $SKUs = @('Standard_D2s_v5', 'Standard_E2s_v5', 'Standard_F2s_v2', 'Standard_L8s_v3'),
-    $Locations = @('westus', 'westus2'),
-    $SubscriptionIds = @('cab7feeb-759d-478c-ade6-9326de0651ff'), # '00000000-0000-0000-0000-000000000000' is a placeholder for your subscription IDs
+    $SKUs = @(),
+    $Locations = @(),
+    $SubscriptionIds = @(),
     [string]$outputFile = "QuotaQuery.csv"
 )
+
+[string]$meterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv"
+[string]$meterDataFile = "AutofitComboMeterData.csv"
+
+if(([string]::IsNullOrEmpty($SKUs)) -or ($SKUs.Count -eq 0))
+{
+    Write-Host ("Downloading VM SKU Details")
+    Invoke-WebRequest -Uri $meterDataUri -OutFile $meterDataFile
+    $meterData = Get-Content $meterDataFile | ConvertFrom-Csv
+    $SKUs = ($meterData | Select-Object -Property NormalizedSKU -Unique | Where-Object { $_.NormalizedSKU -notlike "*sql*" }).NormalizedSKU
+}
+
+if(([string]::IsNullOrEmpty($SubscriptionIds)) -or ($SubscriptionIds.Count -eq 0))
+{
+    Write-Host ("List Subscriptions")
+    $SubscriptionIds = (Get-AzSubscription -TenantId ((Get-AzContext).Tenant.TenantId) | Select-Object SubscriptionId).SubscriptionId
+}
+
+if(([string]::IsNullOrEmpty($Locations)) -or ($Locations.Count -eq 0))
+{
+    Write-Host ("List Locations")
+    $Locations = (Get-AzLocation | Where-Object { $_.RegionType -eq 'Physical' -and $_.PhysicalLocation -ne "" -and $_.Location } | Select-Object -Property Location -Unique).Location
+}
+
 
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'SilentlyContinue'
 $csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal"
 $csvHeaderString | Out-File -Force -FilePath .\$outputFile
-$filteredSkus = @()
 foreach ($SubscriptionId in $SubscriptionIds) {
     try {
         $Subscription = Get-AzSubscription -SubscriptionId $SubscriptionId -WarningAction SilentlyContinue
