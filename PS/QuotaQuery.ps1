@@ -97,4 +97,5 @@ foreach ($SubscriptionId in $SubscriptionIds) {
     }
 }
 
+Write-Host ""
 Get-Content $outputFile | ConvertFrom-Csv | Format-Table -AutoSize
