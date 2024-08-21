@@ -1,59 +1,66 @@
 [CmdletBinding()]
 param (
-    $SKUs = @(),
-    $Locations = @(),
-    $SubscriptionIds = @(),
+    [Parameter(Mandatory = $false, HelpMessage = "e.g. @('Standard_D2s_v3', 'Standard_D4s_v3')")]
+    [string[]]$SKUs = @(),
+
+    [Parameter(Mandatory = $false, HelpMessage = "e.g. @('eastus', 'westus')")]
+    [string[]]$Locations = @(),
+
+    [Parameter(Mandatory = $false, HelpMessage = "e.g. @('00000000-0000-0000-0000-000000000000')")]
+    [string[]]$SubscriptionIds = @(),
+
+    [Parameter(Mandatory = $false, HelpMessage = "Location to download normalized list of VM SKUs")]
+    [string]$meterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv",
+    
+    [Parameter(Mandatory = $false, HelpMessage = "e.g. @('00000000-0000-0000-0000-000000000000')")]
     [string]$outputFile = "QuotaQuery.csv"
 )
 
-[string]$meterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv"
-[string]$meterDataFile = "AutofitComboMeterData.csv"
-
-if(([string]::IsNullOrEmpty($SKUs)) -or ($SKUs.Count -eq 0))
-{
-    Write-Host ("Downloading VM SKU Details")
+function Get-SKUDetails {
+    Write-Host "Downloading VM SKU Details"
+    [string]$meterDataFile = $meterDataUri.Split('/')[$meterDataUri.Split('/').Length - 1]
     Invoke-WebRequest -Uri $meterDataUri -OutFile $meterDataFile
     $meterData = Get-Content $meterDataFile | ConvertFrom-Csv
-    $SKUs = ($meterData | Select-Object -Property NormalizedSKU -Unique | Where-Object { $_.NormalizedSKU -notlike "*sql*" }).NormalizedSKU
+    return ($meterData | Select-Object -Property NormalizedSKU -Unique | Where-Object { $_.NormalizedSKU -notlike "*sql*" }).NormalizedSKU
 }
 
-if(([string]::IsNullOrEmpty($SubscriptionIds)) -or ($SubscriptionIds.Count -eq 0))
-{
-    Write-Host ("List Subscriptions")
-    $SubscriptionIds = (Get-AzSubscription -TenantId ((Get-AzContext).Tenant.TenantId) | Select-Object SubscriptionId).SubscriptionId
+function Get-SubscriptionIds {
+    Write-Host "Listing Subscriptions"
+    return (Get-AzSubscription -TenantId ((Get-AzContext).Tenant.TenantId) | Select-Object -ExpandProperty SubscriptionId)
 }
 
-if(([string]::IsNullOrEmpty($Locations)) -or ($Locations.Count -eq 0))
-{
-    Write-Host ("List Locations")
-    $Locations = (Get-AzLocation | Where-Object { $_.RegionType -eq 'Physical' -and $_.PhysicalLocation -ne "" -and $_.Location } | Select-Object -Property Location -Unique).Location
+function Get-Locations {
+    Write-Host "Listing Locations"
+    return (Get-AzLocation | Where-Object { $_.RegionType -eq 'Physical' -and $_.PhysicalLocation -ne "" -and $_.Location } | Select-Object -Property Location -Unique).Location
 }
 
+function Get-QuotaDetails {
+    param (
+        [string]$SubscriptionId,
+        [string[]]$Locations,
+        [string[]]$SKUs,
+        [string]$outputFile
+    )
 
-$ErrorActionPreference = 'Stop'
-$VerbosePreference = 'SilentlyContinue'
-$csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal"
-$csvHeaderString | Out-File -Force -FilePath .\$outputFile
-foreach ($SubscriptionId in $SubscriptionIds) {
     try {
         $Subscription = Get-AzSubscription -SubscriptionId $SubscriptionId -WarningAction SilentlyContinue
         if ($null -eq $Subscription) {
-            Throw 
+            throw "Subscription not found"
         }
 
-        Set-AzContext -SubscriptionId $Subscription.Id -WarningAction SilentlyContinue | out-null
+        Set-AzContext -SubscriptionId $Subscription.Id -WarningAction SilentlyContinue | Out-Null
         if ((Get-AzResourceProvider -ListAvailable | Where-Object { $_.ProviderNamespace -like 'Microsoft.Capacity' }).RegistrationState -notlike 'Registered') {
             try {
                 Register-AzResourceProvider -ProviderNamespace Microsoft.Capacity
             }
             catch {
-                Write-Host ("Failed Registering Resource Provider: Microsoft.Capacity") -ForegroundColor Yellow
+                Write-Host "Failed Registering Resource Provider: Microsoft.Capacity" -ForegroundColor Yellow
             }
         }
 
-        Write-Host ("Querying Subscription: {0}" -f $Subscription.Name)
+        Write-Host "Querying Subscription: $($Subscription.Name)"
         foreach ($Location in $Locations) {
-            Write-Host ("    Querying Region: {0}" -f $Location)
+            Write-Host "    Querying Region: $Location"
             $computeSKUs = Get-AzComputeResourceSku -Location $Location -ErrorAction SilentlyContinue | Where-Object { $_.ResourceType -eq 'virtualMachines' }
             $vmUsage = Get-AZVMUsage -Location $Location -ErrorAction SilentlyContinue
             foreach ($SKU in $SKUs) {
@@ -63,7 +70,7 @@ foreach ($SubscriptionId in $SubscriptionIds) {
                 if ($null -eq $filteredSku) {
                     continue
                 }
-                    
+
                 $auditedSku = [PSCustomObject]@{
                     TenantId         = $Subscription.TenantId
                     SubscriptionId   = $Subscription.Id
@@ -93,8 +100,31 @@ foreach ($SubscriptionId in $SubscriptionIds) {
         }
     }
     catch {
-        Write-Host ("Failed Querying Subscription ID: {0}" -f $SubscriptionId) -ForegroundColor Yellow
+        Write-Host "Failed Querying Subscription ID: $SubscriptionId" -ForegroundColor Yellow
+        $_.Exception.Message
     }
+}
+
+# Main script execution
+$ErrorActionPreference = 'Stop'
+$VerbosePreference = 'SilentlyContinue'
+$csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal"
+$csvHeaderString | Out-File -Force -FilePath $outputFile
+
+if ($SKUs.Count -eq 0) {
+    $SKUs = Get-SKUDetails
+}
+
+if ($SubscriptionIds.Count -eq 0) {
+    $SubscriptionIds = Get-SubscriptionIds
+}
+
+if ($Locations.Count -eq 0) {
+    $Locations = Get-Locations
+}
+
+foreach ($SubscriptionId in $SubscriptionIds) {
+    Get-QuotaDetails -SubscriptionId $SubscriptionId -Locations $Locations -SKUs $SKUs -outputFile $outputFile
 }
 
 Write-Host ""
