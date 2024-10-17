@@ -13,7 +13,10 @@ param (
     [string]$meterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv",
     
     [Parameter(Mandatory = $false, HelpMessage = "e.g. @('00000000-0000-0000-0000-000000000000')")]
-    [string]$outputFile = "QuotaQuery.csv"
+    [string]$outputFile = "QuotaQuery.csv",
+
+    [Parameter(Mandatory = $false, HelpMessage = "Normalize output to physical availability zones")]
+    [switch]$usePhysicalZones = $false
 )
 
 function Get-SKUDetails {
@@ -29,9 +32,30 @@ function Get-SubscriptionIds {
     return (Get-AzSubscription -TenantId ((Get-AzContext).Tenant.TenantId) | Select-Object -ExpandProperty SubscriptionId)
 }
 
+function Get-LastChar {
+    param (
+        [string]$inputString
+    )
+    
+    if ([string]::IsNullOrEmpty($inputString)) {
+        return ""
+    }
+    return $inputString[-1]
+}
+
 function Get-Locations {
     Write-Host "Listing Locations"
     return (Get-AzLocation | Where-Object { $_.RegionType -eq 'Physical' -and $_.PhysicalLocation -ne "" -and $_.Location } | Select-Object -Property Location -Unique).Location
+}
+
+function Get-ZonePeers {
+    param (
+        [string]$SubscriptionId
+    )
+    Write-Host "Get Zone Peering Information for subscription $SubscriptionId"
+    $uri = "{0}subscriptions/{1}/locations?api-version=2022-12-01" -f $resourceManagerUrl, $SubscriptionId
+    $response = Invoke-AzRest -Method GET -Uri $uri
+    return ($response.Content | ConvertFrom-Json).value
 }
 
 function Get-QuotaDetails {
@@ -58,11 +82,20 @@ function Get-QuotaDetails {
             }
         }
 
+        if($usePhysicalZones)
+        {
+            $zonePeers = Get-ZonePeers -SubscriptionId $SubscriptionId
+            if ($zonePeers.Count -eq 0) {
+                Write-Host "No Zone Peering Information found for subscription $SubscriptionId" -ForegroundColor Yellow
+            }
+        }
+    
         Write-Host "Querying Subscription: $($Subscription.Name)"
         foreach ($Location in $Locations) {
             Write-Host "    Querying Region: $Location"
             $computeSKUs = Get-AzComputeResourceSku -Location $Location -ErrorAction SilentlyContinue | Where-Object { $_.ResourceType -eq 'virtualMachines' }
             $vmUsage = Get-AZVMUsage -Location $Location -ErrorAction SilentlyContinue
+            $availabilityZoneMappings = ($zonePeers | Where-Object { $_.name -like $Location -and $_.type -eq "Region"}).availabilityZoneMappings
             foreach ($SKU in $SKUs) {
                 Write-Host -NoNewline "."
                 $filteredSku = $computeSKUs | Where-Object { $_.Name.ToLowerInvariant() -eq $SKU.ToLowerInvariant() -and $_.LocationInfo.Location -like $Location }
@@ -70,6 +103,15 @@ function Get-QuotaDetails {
                 if ($null -eq $filteredSku) {
                     continue
                 }
+
+                $zones = $filteredSku.LocationInfo.Zones | Sort-Object
+                if($usePhysicalZones)
+                {
+                    $zones = $zones -replace "1", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "1"}).physicalZone))
+                    $zones = $zones -replace "2", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "2"}).physicalZone))
+                    $zones = $zones -replace "3", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "3"}).physicalZone))
+                }
+                
 
                 $auditedSku = [PSCustomObject]@{
                     TenantId         = $Subscription.TenantId
@@ -79,7 +121,7 @@ function Get-QuotaDetails {
                     Family           = $skuUsage.LocalizedValue
                     Size             = $filteredSku.Name
                     RegionRestricted = 'False'
-                    ZonesPresent     = ($filteredSku.LocationInfo.Zones -join ",")
+                    ZonesPresent     = ($zones -join ",")
                     ZonesRestricted  = ''
                     CoresUsed        = $skuUsage.CurrentValue
                     CoresTotal       = $skuUsage.Limit
@@ -87,7 +129,15 @@ function Get-QuotaDetails {
 
                 foreach ($restriction in $filteredSku.Restrictions) {
                     if ($restriction.Type -like "Zone") {
-                        $auditedSku.ZonesRestricted = $restriction.RestrictionInfo.Zones -join ","
+
+                        $zoneRestrictions = $restriction.RestrictionInfo.Zones | Sort-Object
+                        if($usePhysicalZones)
+                        {
+                            $zoneRestrictions = $zoneRestrictions -replace "1", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "1"}).physicalZone))
+                            $zoneRestrictions = $zoneRestrictions -replace "2", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "2"}).physicalZone))
+                            $zoneRestrictions = $zoneRestrictions -replace "3", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "3"}).physicalZone))
+                        }
+                        $auditedSku.ZonesRestricted = $zoneRestrictions -join ","
                     }
                     elseif ($restriction.Type -like "Location") {
                         $auditedSku.RegionRestricted = 'True'
@@ -110,6 +160,7 @@ $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'SilentlyContinue'
 $csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal"
 $csvHeaderString | Out-File -Force -FilePath $outputFile
+$resourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
 
 if ($SKUs.Count -eq 0) {
     $SKUs = Get-SKUDetails
@@ -121,6 +172,14 @@ if ($SubscriptionIds.Count -eq 0) {
 
 if ($Locations.Count -eq 0) {
     $Locations = Get-Locations
+}
+
+if($usePhysicalZones)
+{
+    Write-Host "Output will be normalized to physical availability zones"
+}
+else {
+    Write-Host "Output will not be normalized to physical availability zones"
 }
 
 foreach ($SubscriptionId in $SubscriptionIds) {
