@@ -107,12 +107,11 @@ function Get-QuotaDetails {
                 $zones = $filteredSku.LocationInfo.Zones | Sort-Object
                 if($UsePhysicalZones)
                 {
-                    $zones = $zones -replace "1", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "1"}).physicalZone))
-                    $zones = $zones -replace "2", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "2"}).physicalZone))
-                    $zones = $zones -replace "3", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "3"}).physicalZone))
+                    for ($i = 0; $i -lt $zones.Length; $i++) {
+                        $zones[$i] = Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like $zones[$i]}).physicalZone)
+                    }
                 }
                 
-
                 $auditedSku = [PSCustomObject]@{
                     TenantId         = $Subscription.TenantId
                     SubscriptionId   = $Subscription.Id
@@ -121,7 +120,7 @@ function Get-QuotaDetails {
                     Family           = $skuUsage.LocalizedValue
                     Size             = $filteredSku.Name
                     RegionRestricted = 'False'
-                    ZonesPresent     = ($zones -join ",")
+                    ZonesPresent     = ($zones | Sort-Object) -join ","
                     ZonesRestricted  = ''
                     CoresUsed        = $skuUsage.CurrentValue
                     CoresTotal       = $skuUsage.Limit
@@ -130,14 +129,14 @@ function Get-QuotaDetails {
                 foreach ($restriction in $filteredSku.Restrictions) {
                     if ($restriction.Type -like "Zone") {
 
-                        $zoneRestrictions = $restriction.RestrictionInfo.Zones | Sort-Object
+                        $zoneRestrictions = $restriction.RestrictionInfo.Zones
                         if($UsePhysicalZones)
                         {
-                            $zoneRestrictions = $zoneRestrictions -replace "1", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "1"}).physicalZone))
-                            $zoneRestrictions = $zoneRestrictions -replace "2", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "2"}).physicalZone))
-                            $zoneRestrictions = $zoneRestrictions -replace "3", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "3"}).physicalZone))
+                            for ($i = 0; $i -lt $zones.Length; $i++) {
+                                $zoneRestrictions[$i] = Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like $zoneRestrictions[$i]}).physicalZone)
+                            }
                         }
-                        $auditedSku.ZonesRestricted = $zoneRestrictions -join ","
+                        $auditedSku.ZonesRestricted = ($zoneRestrictions | Sort-Object) -join ","
                     }
                     elseif ($restriction.Type -like "Location") {
                         $auditedSku.RegionRestricted = 'True'
