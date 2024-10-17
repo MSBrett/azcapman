@@ -40,6 +40,9 @@ function Get-LastChar {
     if ([string]::IsNullOrEmpty($inputString)) {
         return ""
     }
+    if ($inputString.Length -lt 1) {
+        return ""
+    }
     return $inputString[-1]
 }
 
@@ -104,7 +107,7 @@ function Get-QuotaDetails {
                     continue
                 }
 
-                $zones = $filteredSku.LocationInfo.Zones | Sort-Object
+                $zones = @($filteredSku.LocationInfo.Zones)
                 if($UsePhysicalZones)
                 {
                     for ($i = 0; $i -lt $zones.Length; $i++) {
@@ -128,11 +131,10 @@ function Get-QuotaDetails {
 
                 foreach ($restriction in $filteredSku.Restrictions) {
                     if ($restriction.Type -like "Zone") {
-
-                        $zoneRestrictions = $restriction.RestrictionInfo.Zones
+                        $zoneRestrictions = @($restriction.RestrictionInfo.Zones)
                         if($UsePhysicalZones)
                         {
-                            for ($i = 0; $i -lt $zones.Length; $i++) {
+                            for ($i = 0; $i -lt $zoneRestrictions.Length; $i++) {
                                 $zoneRestrictions[$i] = Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like $zoneRestrictions[$i]}).physicalZone)
                             }
                         }
