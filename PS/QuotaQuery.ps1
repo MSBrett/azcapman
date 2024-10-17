@@ -10,19 +10,19 @@ param (
     [string[]]$SubscriptionIds = @(),
 
     [Parameter(Mandatory = $false, HelpMessage = "Location to download normalized list of VM SKUs")]
-    [string]$meterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv",
+    [string]$MeterDataUri = "https://ccmstorageprod.blob.core.windows.net/costmanagementconnector-data/AutofitComboMeterData.csv",
     
     [Parameter(Mandatory = $false, HelpMessage = "e.g. @('00000000-0000-0000-0000-000000000000')")]
-    [string]$outputFile = "QuotaQuery.csv",
+    [string]$OutputFile = "QuotaQuery.csv",
 
     [Parameter(Mandatory = $false, HelpMessage = "Normalize output to physical availability zones")]
-    [switch]$usePhysicalZones = $false
+    [switch]$UsePhysicalZones = $false
 )
 
 function Get-SKUDetails {
     Write-Host "Downloading VM SKU Details"
-    [string]$meterDataFile = $meterDataUri.Split('/')[$meterDataUri.Split('/').Length - 1]
-    Invoke-WebRequest -Uri $meterDataUri -OutFile $meterDataFile
+    [string]$meterDataFile = $MeterDataUri.Split('/')[$MeterDataUri.Split('/').Length - 1]
+    Invoke-WebRequest -Uri $MeterDataUri -OutFile $meterDataFile
     $meterData = Get-Content $meterDataFile | ConvertFrom-Csv
     return ($meterData | Select-Object -Property NormalizedSKU -Unique | Where-Object { $_.NormalizedSKU -notlike "*sql*" }).NormalizedSKU
 }
@@ -63,7 +63,7 @@ function Get-QuotaDetails {
         [string]$SubscriptionId,
         [string[]]$Locations,
         [string[]]$SKUs,
-        [string]$outputFile
+        [string]$OutputFile
     )
 
     try {
@@ -82,7 +82,7 @@ function Get-QuotaDetails {
             }
         }
 
-        if($usePhysicalZones)
+        if($UsePhysicalZones)
         {
             $zonePeers = Get-ZonePeers -SubscriptionId $SubscriptionId
             if ($zonePeers.Count -eq 0) {
@@ -105,7 +105,7 @@ function Get-QuotaDetails {
                 }
 
                 $zones = $filteredSku.LocationInfo.Zones | Sort-Object
-                if($usePhysicalZones)
+                if($UsePhysicalZones)
                 {
                     $zones = $zones -replace "1", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "1"}).physicalZone))
                     $zones = $zones -replace "2", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "2"}).physicalZone))
@@ -131,7 +131,7 @@ function Get-QuotaDetails {
                     if ($restriction.Type -like "Zone") {
 
                         $zoneRestrictions = $restriction.RestrictionInfo.Zones | Sort-Object
-                        if($usePhysicalZones)
+                        if($UsePhysicalZones)
                         {
                             $zoneRestrictions = $zoneRestrictions -replace "1", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "1"}).physicalZone))
                             $zoneRestrictions = $zoneRestrictions -replace "2", (Get-LastChar(($availabilityZoneMappings | Where-Object {$_.LogicalZone -like "2"}).physicalZone))
@@ -144,7 +144,7 @@ function Get-QuotaDetails {
                     }
                 }
 
-                $auditedSku | ConvertTo-Csv -NoHeader | Out-File -Force -Append -FilePath .\$outputFile
+                $auditedSku | ConvertTo-Csv -NoHeader | Out-File -Force -Append -FilePath .\$OutputFile
             }
             Write-Host ""
         }
@@ -159,7 +159,7 @@ function Get-QuotaDetails {
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'SilentlyContinue'
 $csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal"
-$csvHeaderString | Out-File -Force -FilePath $outputFile
+$csvHeaderString | Out-File -Force -FilePath $OutputFile
 $resourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
 
 if ($SKUs.Count -eq 0) {
@@ -174,7 +174,7 @@ if ($Locations.Count -eq 0) {
     $Locations = Get-Locations
 }
 
-if($usePhysicalZones)
+if($UsePhysicalZones)
 {
     Write-Host "Output will be normalized to physical availability zones"
 }
@@ -183,8 +183,8 @@ else {
 }
 
 foreach ($SubscriptionId in $SubscriptionIds) {
-    Get-QuotaDetails -SubscriptionId $SubscriptionId -Locations $Locations -SKUs $SKUs -outputFile $outputFile
+    Get-QuotaDetails -SubscriptionId $SubscriptionId -Locations $Locations -SKUs $SKUs -outputFile $OutputFile
 }
 
 Write-Host ""
-Get-Content $outputFile | ConvertFrom-Csv | Format-Table -AutoSize
+Get-Content $OutputFile | ConvertFrom-Csv | Format-Table -AutoSize
