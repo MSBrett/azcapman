@@ -1,9 +1,6 @@
 [CmdletBinding()]
 param (
 
-    [Parameter(Mandatory = $false, HelpMessage = "e.g. @('eastus', 'westus')")]
-    [string[]]$Locations = @(),
-
     [Parameter(Mandatory = $false, HelpMessage = "e.g. @('00000000-0000-0000-0000-000000000000')")]
     [string[]]$SubscriptionIds = @(),
     
@@ -29,11 +26,6 @@ function Get-LastChar {
     return $inputString[-1]
 }
 
-function Get-Locations {
-    Write-Host "Listing Locations"
-    return (Get-AzLocation | Where-Object { $_.RegionType -eq 'Physical' -and $_.PhysicalLocation -ne "" -and $_.Location } | Select-Object -Property Location -Unique).Location
-}
-
 function Get-ZonePeers {
     param (
         [string]$SubscriptionId
@@ -47,16 +39,12 @@ function Get-ZonePeers {
 # Main script execution
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'SilentlyContinue'
-$csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,AzName,LogicalZone,PhysicalZone"
+$csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,LogicalZone,PhysicalZone,PhysicalZoneName"
 $csvHeaderString | Out-File -Force -FilePath $OutputFile
 $resourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
 
 if ($SubscriptionIds.Count -eq 0) {
     $SubscriptionIds = Get-SubscriptionIds
-}
-
-if ($Locations.Count -eq 0) {
-    $Locations = Get-Locations
 }
 
 $zoneMaps = @()
@@ -75,9 +63,9 @@ ForEach ($subscriptionId in $SubscriptionIds){
         SubscriptionId   = $Subscription.Id
         SubscriptionName = $Subscription.Name
         Location         = $mapping.physicalZone.Split("-")[0]
-        AzName           = $mapping.physicalZone
         LogicalZone      = $mapping.logicalZone
         PhysicalZone     = Get-LastChar($mapping.physicalZone)
+        PhysicalZoneName = $mapping.physicalZone
         }
         
         $zoneMaps += $zoneMap
