@@ -30,7 +30,6 @@ function Get-ZonePeers {
     param (
         [string]$SubscriptionId
     )
-    Write-Host "Get Zone Peering Information for subscription $SubscriptionId"
     $uri = "{0}subscriptions/{1}/locations?api-version=2022-12-01" -f $resourceManagerUrl, $SubscriptionId
     $response = Invoke-AzRest -Method GET -Uri $uri
     return ($response.Content | ConvertFrom-Json).value
