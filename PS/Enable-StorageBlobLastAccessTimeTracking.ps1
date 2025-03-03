@@ -1,4 +1,5 @@
 
+# Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MSBrett/azcapman/refs/heads/main/PS/Enable-StorageBlobLastAccessTimeTracking.ps1" -OutFile "Enable-StorageBlobLastAccessTimeTracking.ps1"; ./Enable-StorageBlobLastAccessTimeTracking.ps1
 
 param(
     [bool]$commit=$false
@@ -16,7 +17,8 @@ function Enable-LastAccessTimeTracking {
     {
         Enable-AzStorageBlobLastAccessTimeTracking  -ResourceGroupName $rgName `
         -StorageAccountName $accountName `
-        -PassThru
+        -PassThru `
+        -Confirm $false
     }
 }
 
@@ -33,7 +35,7 @@ foreach ($subscription in $subscriptions)
         $storageAccounts = Get-AzStorageAccount -ResourceGroupName $resourceGroup.ResourceGroupName
         foreach ($storageAccount in $storageAccounts)
         {
-            Enable-LastAccessTimeTracking -rgName $resourceGroup.ResourceGroupName -accountName $storageAccount.StorageAccountName -commit $commit
+            Enable-LastAccessTimeTracking -rgName $resourceGroup.ResourceGroupName -accountName $storageAccount.StorageAccountName -commit $commit -Confirm $false
         } 
     }
 }
