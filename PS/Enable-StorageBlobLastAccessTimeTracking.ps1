@@ -72,8 +72,16 @@ foreach ($subscription in $subscriptions)
             $storageAccounts = Get-AzStorageAccount -ResourceGroupName $resourceGroup.ResourceGroupName
             foreach ($storageAccount in $storageAccounts)
             {
-                Write-Output "  Processing Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName)"
-                Enable-Inventory -rgName $resourceGroup.ResourceGroupName -accountName $storageAccount.StorageAccountName
+                if($storageAccount.Kind -ne "StorageV2" -and $storageAccount.Kind -ne "Storage" -and ($storageAccount.Kind -ne "BlockBlobStorage" -and $storageAccount.Sku.Name -ne "Premium_LRS"))
+                {
+                    Write-Output "  Skipping Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName) because it a $($storageAccount.Kind) account of type $($storageAccount.Sku.Name)"
+                }
+                else
+                {
+                    Write-Output "  Processing Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName) because it a $($storageAccount.Kind) account of type $($storageAccount.Sku.Name)"
+                    Enable-Inventory -rgName $resourceGroup.ResourceGroupName -accountName $storageAccount.StorageAccountName
+                }
+                
             } 
         }
     }  
