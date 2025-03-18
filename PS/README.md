@@ -4,7 +4,7 @@ The QueryQuota.ps1 script can be run to determine the current state of the avail
 Review the parameter block of the script for more details.
 
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MSBrett/azcapman/main/PS/QuotaQuery.ps1" -OutFile "QuotaQuery.ps1"; .\QuotaQuery.ps1 -SKUs @('Standard_D2s_v5', 'Standard_E2s_v5', 'Standard_F2s_v2') -Locations @('westus', 'westus2', 'westus3') -SubscriptionIds (Get-AzSubscription -TenantId ((Get-AzContext).Tenant.TenantId) | Select-Object SubscriptionId).SubscriptionId
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MSBrett/azcapman/main/PS/Query-AzQuota.ps1" -OutFile "QuotaQuery.ps1"; .\QuotaQuery.ps1 -SKUs @('Standard_D2s_v5', 'Standard_E2s_v5', 'Standard_F2s_v2') -Locations @('westus', 'westus2', 'westus3') -SubscriptionIds (Get-AzSubscription -TenantId ((Get-AzContext).Tenant.TenantId) | Select-Object SubscriptionId).SubscriptionId
 ```
 
 The script will output the following information:
