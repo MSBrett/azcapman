@@ -17,7 +17,7 @@ param (
 
     [Parameter(Mandatory = $false, HelpMessage = "Concurrent threads to use.  Set to '0' for auto-detect")]
     [ValidateRange(0, 40)]
-    [int]$Threads = 0,
+    [int]$Threads = 2,
 
     [Parameter(Mandatory = $false, HelpMessage = "Output file name")]
     [string]$OutputFile = "QuotaQuery.csv"
