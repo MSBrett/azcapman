@@ -127,6 +127,8 @@ function Get-QuotaDetails {
                     ZonesRestricted  = ''
                     CoresUsed        = $skuUsage.CurrentValue
                     CoresTotal       = $skuUsage.Limit
+                    CoresRequested   = ''
+                    ZonesRequested  = ''
                 }
 
                 foreach ($restriction in $filteredSku.Restrictions) {
@@ -163,7 +165,7 @@ function Get-QuotaDetails {
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'SilentlyContinue'
 $begin = Get-Date
-$csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal"
+$csvHeaderString = "TenantId,SubscriptionId,SubscriptionName,Location,Family,Size,RegionRestricted,ZonesPresent,ZonesRestricted,CoresUsed,CoresTotal,CoresRequested,ZonesRequested"
 
 if($Threads -eq 0)
 {
