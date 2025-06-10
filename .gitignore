@@ -4,3 +4,7 @@ AutofitComboMeterData.csv
 ZonePeers.csv
 QuotaQuery*.pbix
 .vscode/
+CLAUDE.md
+.github/copilot-*.md
+.github/prompts/*
+style-guide/

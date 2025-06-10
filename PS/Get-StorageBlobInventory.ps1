@@ -26,24 +26,35 @@ foreach ($subscription in $subscriptions)
                 else
                 {
                     Write-Output "  Processing Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName) because it a $($storageAccount.Kind) account of type $($storageAccount.Sku.Name)"
-                    $ctx = New-AzStorageContext -StorageAccountName $storageAccount.StorageAccountName -UseConnectedAccount
-                    $container=Get-AzStorageContainer -Context $ctx -Name "inventory"
-                    if($null -ne $container)
-                    {
-                        $blobs = Get-AzStorageBlob -Context $ctx -Container $container.Name
-                        foreach ($blob in $blobs)
-                        {
-                            if($blob.Name.EndsWith(".csv"))
-                            {
-                                Write-Output "      $($blob.Name)"
-                                New-Item -Path "$env:SystemDrive\inventory\$($storageAccount.StorageAccountName)\" -ItemType Directory -Force | Out-Null
-                                Get-AzStorageBlobContent -Blob $blob.Name -Container $container.Name -Context $ctx -Destination "$env:SystemDrive\inventory\$($storageAccount.StorageAccountName)\" -Force
+                    $ctx = New-AzStorageContext -StorageAccountName $storageAccount.StorageAccountName -StorageAccountKey (Get-AzStorageAccountKey -ResourceGroupName $resourceGroup.ResourceGroupName -Name $storageAccount.StorageAccountName)[0].Value
+                    try {
+                        $container=Get-AzStorageContainer -Context $ctx -Name "inventory"
+                        if($null -ne $container){
+                            try {
+                                $blobs = Get-AzStorageBlob -Context $ctx -Container $container.Name
+                                foreach ($blob in $blobs)
+                                {
+                                    if($blob.Name.EndsWith(".csv"))
+                                    {
+                                        #Write-Output "      $($blob.Name)"
+                                        (New-Item -Path "$env:SystemDrive\inventory\$($storageAccount.StorageAccountName)\" -ItemType Directory -Force) | Out-Null
+                                        (Get-AzStorageBlobContent -Blob $blob.Name -Container $container.Name -Context $ctx -Destination "$env:SystemDrive\inventory\$($storageAccount.StorageAccountName)\" -Force) | Out-Null
+                                    }
+                                }
                             }
+                            catch {
+                               Write-Error "      Error getting blobs in inventory container: $($container.Name) in Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName)"
+                            }
+                            
+                        }
+                        else {
+                            Write-Output "      Inventory container not found in Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName)"
                         }
                     }
-                    else {
-                        Write-Output "      Inventory container not found in Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName)"
+                    catch {
+                        Write-Error "      Error getting inventory container in Storage Account: $($storageAccount.StorageAccountName) in Resource Group: $($resourceGroup.ResourceGroupName)"
                     }
+                    
                 }
                 
             } 
