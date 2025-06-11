@@ -61,6 +61,8 @@ nav_order: 4
 
 ## REST API
 
+> **Note:** Azure Quota Groups is a generally available (GA) feature using API version 2025-03-01.
+
 ### View quota allocation snapshot for subscription in quota group
 
 - Limit = current subscription limit
@@ -147,4 +149,86 @@ az rest –method patch –url "https://management.azure.com/providers/Microsoft
 
 ---
 
-### View quota allocation snapshot for subscription in quota group
+## View quota allocation snapshot for subscription in quota group
+
+To view the current quota allocation for a subscription within a quota group:
+
+```
+GET https://management.azure.com/subscriptions/{subscription-id}/providers/Microsoft.Quota/groupQuotas/{groupQuotaName}/resourceProviders/{resourceProviderName}/groupQuotaRequests/{allocationRequestId}?api-version=2025-03-01
+```
+
+This will return the details of the quota allocation including:
+- Current allocated quota
+- Quota request status
+- Resource details (region, VM family, etc.)
+
+---
+
+## Important: Manual transfers only
+
+**Azure Quota Groups do not provide automatic quota balancing or failover.** All quota transfers must be initiated manually. If a subscription exhausts its allocated quota:
+- It will NOT automatically borrow from the group
+- Deployments will fail until you manually transfer additional quota
+- There are no built-in alerts when quota is exhausted
+
+Consider implementing your own monitoring and automation for quota management.
+
+---
+
+## Understanding shareable quota
+
+When working with quota transfers, you may encounter **negative values** in the shareable quota. This occurs when:
+
+1. **Over-allocation**: A subscription has been allocated more quota than it currently has available
+2. **Active resources**: The subscription is using quota that exceeds its individual subscription limit
+3. **Pending transfers**: Quota has been deallocated but the transfer hasn't completed
+
+### Example scenario with negative shareable quota:
+
+If a subscription has:
+- Individual subscription quota: 100 cores
+- Allocated from group: 150 cores
+- Currently in use: 120 cores
+
+The shareable quota would be: 100 - 150 = **-50 cores**
+
+This negative value indicates that the subscription is relying on the group quota allocation and cannot share any quota until:
+- Its individual quota is increased, OR
+- Some of the group allocation is deallocated
+
+---
+
+## Troubleshooting transfer issues
+
+### Common issues and solutions:
+
+1. **"Insufficient quota available"**
+   - Check the source subscription's shareable quota
+   - Ensure the source has unused quota to transfer
+   - Verify the quota isn't locked by running VMs
+
+2. **"Subscription not found in quota group"**
+   - Confirm both subscriptions are members of the same quota group
+   - Check subscription membership using the status API
+
+3. **"Invalid resource provider or quota name"**
+   - Verify the exact resource provider name (e.g., `Microsoft.Compute`)
+   - Confirm the quota resource name matches the API format
+
+4. **"Transfer request stuck in 'InProgress'"**
+   - Check for any service health issues in the region
+   - If the transfer remains in 'InProgress' state for an extended period, open a support ticket
+
+### Best practices for quota transfers:
+
+1. **Plan transfers during low-usage periods** to minimize impact
+2. **Monitor quota usage** before and after transfers
+3. **Document transfer reasons** for audit purposes
+4. **Set up alerts** for quota utilization thresholds
+5. **Use automation** for regular transfer patterns
+
+## Next steps
+
+- [Request quota increases](08-increase-request.md) for the entire group
+- [Monitor quota status](09-get-status.md) across all subscriptions
+- [Create support tickets](10-support-ticket.md) for complex scenarios

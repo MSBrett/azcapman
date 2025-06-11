@@ -14,9 +14,11 @@ Azure Quota Groups allow you to share quota among a group of subscriptions, redu
 ## Key benefits
 
 - Quota sharing across subscriptions: Share procured quotas within a group of subscriptions
-- Self-service management: Distribute or reallocate unused quota without Microsoft intervention
+- Self-service management: Manually distribute or reallocate unused quota without Microsoft intervention
 - Fewer support requests: Avoid filing support tickets when reallocating quota or managing new subscriptions
 - Group quota requests: Request quota at the group level and allocate it across subscriptions as needed
+
+**Note**: All quota transfers and allocations are manual operations. Azure Quota Groups do not provide automatic load balancing or quota redistribution.
 
 ---
 
@@ -25,10 +27,19 @@ Azure Quota Groups allow you to share quota among a group of subscriptions, redu
 **Availability zones and regional access**: Quota Groups addresses the quota management pain point, but does not address the regional or zonal access pain point. To get region or zonal access on subscriptions, see the [region access request process](11-region-access-requests.md). Quota transfers between subscriptions and deployments will fail unless regional and zonal access is provided on the subscription.
 
 Additional limitations include:
-- Available only for Enterprise Agreement or Microsoft Customer Agreement and Internal subscriptions
+- Available only for Enterprise Agreement (EA), Microsoft Customer Agreement (MCA), and Internal subscriptions
 - Supports IaaS compute resources only
 - Available in public cloud regions only
 - A subscription can belong to a single Quota Group at a time
+
+## What Azure Quota Groups do NOT provide
+
+- **No automatic quota balancing**: Quota must be manually transferred between subscriptions
+- **No built-in monitoring or alerting**: No native alerts for quota utilization thresholds
+- **No cross-region transfers**: Quota transfers are limited to the same region
+- **No automatic failover**: If a subscription exhausts quota, it won't automatically borrow from the group
+- **No quota policies**: Cannot set automatic rules for quota distribution
+- **No historical tracking**: No built-in analytics for quota usage patterns over time
 
 ---
 

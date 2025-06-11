@@ -34,7 +34,7 @@ To submit a Quota Group limit increase request using the Azure portal:
    - See the **Current group quota** value
    - Under **New group quota** column, enter the absolute value of the desired new group limit (e.g., enter "20" if you want 20 cores total for the VM family in that region)
 9. Select **Submit** button
-10. You'll see a notification: "We are reviewing your request to adjust the quota. This may take up to ~3 minutes to complete"
+10. You'll see a notification: "We are reviewing your request to adjust the quota"
 11. If successful, the **New quota request** view will show:
     - The selected quota group resource by location
     - Status of the request

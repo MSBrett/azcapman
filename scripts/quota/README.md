@@ -7,7 +7,7 @@ nav_order: 2
 
 # Quota Management Scripts
 
-Analyze Azure quota usage across your subscriptions and regions.
+These scripts are intended to analyze quota usage across subscriptions and regions in scenarios where Quota Groups **have not** been implemented.
 
 ---
 
@@ -224,7 +224,6 @@ You'll need Azure PowerShell installed and signed in to use these scripts.
 ### Common Issues
 
 **Authentication Errors**:
-
 ```powershell
 # Ensure you're signed in
 Connect-AzAccount
@@ -249,16 +248,12 @@ Get-AzContext
 - Reduce concurrent operations
 - Add delays between API calls if necessary
 
----
-
 ### Getting Help
 
 For issues with these scripts:
 1. Check the [Azure PowerShell documentation](https://docs.microsoft.com/en-us/powershell/azure/)
 2. Review Azure subscription and quota limits
 3. Contact Azure support for quota increase requests
-
----
 
 ## Script Versions
 

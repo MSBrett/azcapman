@@ -17,9 +17,31 @@ Before you can use the Quota Group feature, you must:
 
 # Limitations
 
-- Available only for Enterprise Agreement or Microsoft Customer Agreement and Internal subscriptions
+- Available only for Enterprise Agreement (EA), Microsoft Customer Agreement (MCA), and Internal subscriptions
 - Supports IaaS compute resources only
 - Available in public cloud regions only
-- Management Group deletion results in the loss of access to the Quota Group limit. To clear out the group limit, allocate cores to subscriptions, delete subscriptions, then the Quota Group object before deletion of Management Group. In the event that the MG's deleted, access your Quota Group limit by recreating the MG with the same ID as before
+- **⚠️ CRITICAL WARNING - MANAGEMENT GROUP DELETION**: 
+  
+  **DO NOT DELETE THE MANAGEMENT GROUP** containing your Quota Group without following these steps:
+  
+  1. **FIRST** - Allocate all quota from the group back to subscriptions
+  2. **SECOND** - Remove all subscriptions from the Quota Group
+  3. **THIRD** - Delete the Quota Group object
+  4. **ONLY THEN** - Delete the Management Group
+  
+  **CONSEQUENCES OF IMPROPER DELETION**:
+  - **Permanent loss** of access to the Quota Group limit
+  - **Stranded quota** that cannot be recovered without support
+  - **Service disruption** if quota is needed for deployments
+  
+  **Recovery Process**: If accidentally deleted, you must recreate the Management Group with the **EXACT SAME ID**. This is complex, may require Microsoft support, and is not guaranteed to restore access
 - A subscription can belong to a single Quota Group at a time
 - Quota Groups addresses the quota management pain point, it doesn't address the regional and/or zonal access pain point. To get region and/or zonal access on subscriptions, [see region access request process](https://learn.microsoft.com/en-us/troubleshoot/azure/general/region-access-request-process). Quota transfers between subscriptions and deployments will fail unless regional and/or zonal access is provided on the subscription
+
+## Operational limits
+
+The following operational limits may apply (check with Azure support for current values):
+- Maximum number of subscriptions per quota group
+- Maximum number of quota groups per management group
+- API rate limits for quota operations
+- Maximum concurrent transfer operations

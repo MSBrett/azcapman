@@ -19,7 +19,11 @@ Certain permissions are required to create Quota Groups and to add subscriptions
 
 This section covers the supported Quota Group operations via API and portal.
 
+> **Note**: Azure Quota Groups is a generally available (GA) feature. The current API version is 2025-03-01.
+
 Use [Quota Group APIs](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/quota/resource-manager/Microsoft.Quota/stable/2025-03-01/groupquota.json) to:
+
+> **Note**: The GitHub repository linked above is the official location for Azure REST API specifications, including the Quota Group APIs. This is maintained by Microsoft and is the authoritative source for API documentation.
 
 - Create or delete a Quota Group
 - Add or remove subscriptions from a Quota Group
