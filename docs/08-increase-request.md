@@ -28,6 +28,11 @@ To submit a Quota Group limit increase request using the Azure portal:
 5. In the **Quota Group resources** view, you'll see a list of quota group resources by region and VM family
 6. Use the filters to select **Region** and/or **VM Family**, or search for specific regions and VM families in the search bar
 7. Select the checkbox next to the desired quota group resource, then select **Increase group quota** button at the top of the page
+
+---
+
+### Submit and track your request
+
 8. In the **New quota request** blade on the right side:
    - Review the selected region(s) at the top
    - View details of the selected quota group resource

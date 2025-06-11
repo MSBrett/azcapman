@@ -46,6 +46,8 @@ Use [Azure Quotas monitoring and alerting](https://learn.microsoft.com/en-us/azu
 
 Set up alerts at 70% utilization to ensure you have time to request increases before reaching limits.
 
+---
+
 ### 2. Forecast future needs
 Apply forecasting techniques as recommended by Microsoft:
 - Analyze historical data to predict future workload trends.
@@ -53,11 +55,15 @@ Apply forecasting techniques as recommended by Microsoft:
 - Consider seasonal variations in demand.
 - Plan for customer onboarding pipelines.
 
+---
+
 ### 3. Submit requests 90 days in advance
 Submit all requests at the start of each quarter for the following quarter:
 - **Standard practice**: 90-day advance submission for all requests.
 - **Batch submission**: Submit quota and access requests together.
 - **No exceptions**: Even "simple" requests should follow this timeline.
+
+---
 
 ### 4. Maintain buffers
 [Quota Groups](https://learn.microsoft.com/en-us/azure/quotas/quota-groups) require manual quota management. Maintain adequate buffers:

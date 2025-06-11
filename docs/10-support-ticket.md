@@ -7,6 +7,8 @@ nav_order: 3
 
 # Support ticket process for quota group requests
 
+---
+
 ## When to file a support ticket
 
 File a support ticket when:
@@ -14,10 +16,14 @@ File a support ticket when:
 - You encounter issues with quota transfers or allocations
 - You need assistance with complex quota scenarios
 
+---
+
 ## Requirements
 
 - **Minimum role**: Support Request Contributor on a subscription within the group
 - Support tickets are created using a subscription ID from the group, but approved quota is applied at the group level
+
+---
 
 ## Filing a support ticket via portal
 
@@ -49,6 +55,8 @@ If you receive a "We were unable to adjust your quota" notification:
 ### Step 4: Track your request
 - View in Quotas > Request tab
 - Or check Help + Support > Recent support requests
+
+---
 
 ## Important notes
 

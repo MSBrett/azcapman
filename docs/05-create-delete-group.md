@@ -79,7 +79,9 @@ To create a Quota Group using the Azure portal:
 <figcaption>Quota groups list displaying the newly created quota group</figcaption>
 </figure>
 
-### REST API
+---
+
+## REST API
 
 To create a Quota Group using the REST API, make a `PUT` request:
 
