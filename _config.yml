@@ -1,0 +1,56 @@
+# Just the Docs configuration for GitHub Pages
+
+# Site settings
+title: "Quota Group Onboarding Guide for ISVs"
+description: "Comprehensive guide for Independent Software Vendors to implement and manage Azure Quota Groups."
+
+# Remote theme for GitHub Pages compatibility
+remote_theme: just-the-docs/just-the-docs
+
+# URL (update to your repo's GitHub Pages URL)
+url: "https://msbrett.github.io"
+baseurl: "/azcapman"
+
+# Build settings
+markdown: kramdown
+
+# Plugins
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Just the Docs theme options
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 2
+  preview_words_before: 3
+  preview_words_after: 3
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+
+# Color scheme
+color_scheme: light
+
+# Footer content
+footer_content: "Azure Quota and Capacity Management Documentation"
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# Exclude files from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .bundle/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - README.md
+  - CLAUDE.md
+  - LICENSE

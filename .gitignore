@@ -1,10 +1,51 @@
+# Generated script output files
 QuotaQuery_*.csv
 QuotaQuery.csv
 AutofitComboMeterData.csv
 ZonePeers.csv
 QuotaQuery*.pbix
+
+# Development tools
 .vscode/
 CLAUDE.md
 .github/copilot-*.md
 .github/prompts/*
 style-guide/
+
+# Jekyll build output
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Ruby/Bundler
+vendor/
+.bundle/
+Gemfile.lock
+bin/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.#*
+
+# Logs
+*.log
+
+# IDE files
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+Icon?

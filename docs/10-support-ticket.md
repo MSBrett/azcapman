@@ -1,9 +1,18 @@
+---
+layout: page
+title: Support Process
+parent: Operations & Support
+nav_order: 3
+---
+
 # Submit quota group limit increase and file support ticket if request fails
 
 - If Quota Group limit request is rejected via API or portal, then customer must submit support ticket via the self-serve Quota Group request portal blade
 - Support tickets for Quota Groups will be created based on a preselected subscription ID within the group, the customer has the ability to edit the sub ID when updating request details. Even though ticket's created using sub ID, if approved the quota will be stamped at the group level
 - User requires at a minimum the Support request contributor role to create support ticket on subscription in the group
 - Quota Groups addresses the quota management pain point, it doesn't address the regional and/or zonal access pain point. To get region and/or zonal access on subscriptions, [see region access request process](https://learn.microsoft.com/en-us/troubleshoot/azure/general/region-access-request-process). Quota transfers between subscriptions and deployments will fail unless regional and/or zonal access is provided on the subscription
+
+---
 
 ## Portal
 

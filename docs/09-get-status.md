@@ -1,4 +1,13 @@
-# GET groupQuotaLimit request status
+---
+layout: page
+title: Monitor Status
+parent: Operations & Support
+nav_order: 2
+---
+
+# Get groupQuotaLimit request status
+
+---
 
 ## Azure portal
 
@@ -17,6 +26,8 @@
    - **Limit**: Cores explicitly requested and approved/stamped on your group via quota increase requests
    - **Quota allocated**: Cores allocated to subscriptions (negative values indicate cores de-allocated from subscription to group)
 
+---
+
 ### Check quota increase request status
 
 1. Navigate to your quota group following steps 1-4 above
@@ -27,9 +38,11 @@
    - **Rejected**: Request was denied (you can create a support ticket)
 4. For approved requests, refresh the **Quota Group resources** view to see updated group limits
 
+---
+
 ## REST API
 
-### GET groupQuotaLimits
+### Get groupQuotaLimits
 
 Validate that the correct number of cores were transferred from source subscription to group or that your group limit increase request was approved. Consider the below when interpreting the API response.
 
@@ -94,9 +107,11 @@ az rest --method get --url "https://management.azure.com/providers/Microsoft.Man
 }
 ```
 
+---
+
 ## REST API
 
-### GET groupQuotaLimit request status
+### Get groupQuotaLimit request status
 
 Since groupQuotaLimit request is async operation, capture status of request using groupQuotaOperationsStatus ID from response header when submitting limit increase request
 

@@ -1,6 +1,15 @@
+---
+layout: page
+title: Manage Subscriptions
+parent: Implementation
+nav_order: 3
+---
+
 # Add or remove subscriptions from a quota group
 
 This section covers how to add subscriptions after the Quota Group is created. When added to the group, subscriptions carry their existing quota and usage. The subscriptions' quota isn't manipulated when added to a group. Subscription quota remains separate from the group limit.
+
+---
 
 ## Azure portal
 
@@ -16,9 +25,14 @@ This section covers how to add subscriptions after the Quota Group is created. W
    - Select the checkboxes next to the subscriptions you want to include
    - Select **Add** to add the selected subscriptions to the quota group
 
-<img src="img/1-new.jpeg" alt="Create quota group wizard showing basic configuration form" width="50%" />
+<figure>
+<img src="img/1-new.jpeg" alt="Create quota group wizard showing basic configuration form" width="50%" class="clickable-image" />
+<figcaption>Add subscriptions interface for selecting subscriptions to include in the quota group</figcaption>
+</figure>
 
 7. The subscriptions will be added with their existing quota and usage intact
+
+---
 
 ### Remove subscriptions from a quota group
 
@@ -29,7 +43,10 @@ This section covers how to add subscriptions after the Quota Group is created. W
 5. Confirm the removal when prompted
 6. The subscriptions will be removed while retaining their existing quota and usage
 
+---
+
 ## REST API
+
 To add subscriptions from the Quota Group using the REST API, make a `PUT` request to the following endpoint:
 
 ```

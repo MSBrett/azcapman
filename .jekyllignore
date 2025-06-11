@@ -1,0 +1,9 @@
+# This file is used by Jekyll to exclude files from the site build
+/_site/
+/.jekyll-cache/
+/.bundle/
+/Gemfile
+/Gemfile.lock
+/node_modules/
+/vendor/
+/style-guide/

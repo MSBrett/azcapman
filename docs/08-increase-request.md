@@ -1,3 +1,10 @@
+---
+layout: page
+title: Request Increases
+parent: Operations & Support
+nav_order: 1
+---
+
 # Submit quota group limit increase request
 
 One of the key benefits of Quota Group offering is the ability to submit Quota Group limit increase requests rather than at the per subscription level. If your group limit request's approved, you can then follow steps to allocate/transfer quota from group to target subscriptions for a given region × VM family.
@@ -7,6 +14,8 @@ One of the key benefits of Quota Group offering is the ability to submit Quota G
 - Quota Group limit increase requests undergo the same checks as subscription level requests. Value should be absolute value of the new desired amount
 - If Quota Group limit request is rejected, then customer must submit support ticket via the self-serve Quota Group request blade
 - Support tickets for Quota Groups will be created based on a preselected subscription ID within the group, the customer has the ability to edit the sub ID when updating request details
+
+---
 
 ## Azure portal
 
@@ -34,6 +43,8 @@ To submit a Quota Group limit increase request using the Azure portal:
 12. Refresh the **Quota Group resources** view to see the latest group quota/group limit
 13. If the quota group limit increase is rejected, you'll see a notification: "We were unable to adjust your quota"
 14. If rejected, select **Generate a support ticket** button to create a support request (see file 10-support-ticket.md for detailed portal support ticket process)
+
+---
 
 ## REST API
 

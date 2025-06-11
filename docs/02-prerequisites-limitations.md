@@ -1,3 +1,10 @@
+---
+layout: page
+title: Prerequisites & Limitations
+parent: Getting Started
+nav_order: 2
+---
+
 # Prerequisites
 
 Before you can use the Quota Group feature, you must:
@@ -5,6 +12,8 @@ Before you can use the Quota Group feature, you must:
 - Register the `Microsoft.Quota` and `Microsoft.Compute` resource provider on all relevant subscriptions before adding to a Quota Group. For more information, see [Registering the Microsoft Quota resource provider](https://learn.microsoft.com/en-us/rest/api/quota/#registering-the-microsoft-quota-resource-provider)
 - A Management Group (MG) is needed to create a Quota Group. Your group inherits quota write and/or read permissions from the Management Group. Subscriptions belonging to another MG can be added to the Quota Group
 - Certain permissions are required to create Quota Groups and to add subscriptions
+
+---
 
 # Limitations
 

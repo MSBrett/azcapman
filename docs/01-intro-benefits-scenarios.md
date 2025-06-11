@@ -1,6 +1,15 @@
-# Azure Quota Groups
+---
+layout: page
+title: Overview & Benefits
+parent: Getting Started
+nav_order: 1
+---
+
+# Azure quota groups
 
 Azure Quota Groups allow you to share quota among a group of subscriptions, reducing the number of quota transactions. This feature elevates the quota construct from a subscription level to a Quota Group Azure Resource Management (ARM) object, enabling customers to self-manage their procured quota within a group without needing approvals.
+
+---
 
 ## Key benefits
 
@@ -8,6 +17,20 @@ Azure Quota Groups allow you to share quota among a group of subscriptions, redu
 - Self-service management: Distribute or reallocate unused quota without Microsoft intervention
 - Fewer support requests: Avoid filing support tickets when reallocating quota or managing new subscriptions
 - Group quota requests: Request quota at the group level and allocate it across subscriptions as needed
+
+---
+
+## Important limitations
+
+**Availability zones and regional access**: Quota Groups addresses the quota management pain point, but does not address the regional or zonal access pain point. To get region or zonal access on subscriptions, see the [region access request process](11-region-access-requests.md). Quota transfers between subscriptions and deployments will fail unless regional and zonal access is provided on the subscription.
+
+Additional limitations include:
+- Available only for Enterprise Agreement or Microsoft Customer Agreement and Internal subscriptions
+- Supports IaaS compute resources only
+- Available in public cloud regions only
+- A subscription can belong to a single Quota Group at a time
+
+---
 
 ## Supported scenarios
 

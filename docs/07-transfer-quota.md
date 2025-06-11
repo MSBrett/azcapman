@@ -1,8 +1,17 @@
+---
+layout: page
+title: Transfer Operations
+parent: Implementation
+nav_order: 4
+---
+
 # Transfer quota within quota group
+
+---
 
 ## Azure portal
 
-### Transfer quota from subscription to group (Deallocate)
+### Transfer quota from subscription to group (deallocate)
 
 1. Sign in to the Azure portal and enter "quotas" into the search box, then select **Quotas**
 2. Under **Settings** in the left-hand side, select **Quota groups**
@@ -20,7 +29,9 @@
 10. Select **Transfer** to complete the deallocation
 11. The quota will be moved from the subscription to the group, reducing the subscription's limit and increasing the group's available quota
 
-### Transfer quota from group to subscription (Allocate)
+---
+
+### Transfer quota from group to subscription (allocate)
 
 1. Follow steps 1-6 above to navigate to your quota group resources
 2. Select the checkbox next to the quota resource you want to allocate to a subscription
@@ -33,6 +44,8 @@
 5. Select **Transfer** to complete the allocation
 6. The quota will be moved from the group to the subscription, increasing the subscription's limit and reducing the group's available quota
 
+---
+
 ### View quota allocation snapshot
 
 1. Navigate to your quota group following the steps above
@@ -43,6 +56,8 @@
 3. Select a specific quota resource to view detailed allocation information including:
    - **Limit**: Current subscription limit for each subscription in the group
    - **Shareable quota**: Amount transferred from subscription to group (negative values indicate cores given to group)
+
+---
 
 ## REST API
 
@@ -81,6 +96,8 @@ Response content
   ]
 }
 ```
+
+---
 
 ## REST API
 
@@ -128,4 +145,6 @@ az rest –method patch –url "https://management.azure.com/providers/Microsoft
 }' –debug
 ```
 
-### View quota allocation snapshot for subscription in Quota Group
+---
+
+### View quota allocation snapshot for subscription in quota group

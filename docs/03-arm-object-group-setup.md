@@ -1,4 +1,11 @@
-# Quota Group is an ARM object
+---
+layout: page
+title: Planning & Architecture
+parent: Getting Started
+nav_order: 3
+---
+
+# Quota group is an ARM object
 
 Quota Group is a global ARM object created under a Management Group to logically group subscriptions for quota management. While it's tied to the Management Group for permissions, it doesn't auto-sync subscription membership. This means you have full flexibility to include subscriptions from different Management Groups. Quota Groups are:
 
@@ -10,6 +17,8 @@ Quota Group is a global ARM object created under a Management Group to logically
 The following diagram shows an existing MG hierarchy set up with subscription 1 and subscription 2 being part of Management Group A, and subscription 3 being part of Management Group B. In this example, the customer chose to create all quota groups under the single Management Group A.
 
 ![Diagram of Management Group hierarchy with sample Quota Groups created under Management Group.](https://learn.microsoft.com/en-us/azure/quotas/media/quota-groups/sample-management-group-quota-group-hierarchy.png)
+
+---
 
 # Recommended group setup
 
