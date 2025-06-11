@@ -27,7 +27,7 @@ iwr "https://raw.githubusercontent.com/MSBrett/azcapman/main/scripts/quota/Query
 
 ## Core Tool Categories
 
-### 🔍 [Quota Management](scripts/quota/)
+### 🔍 [Quota Management](scripts/quota/README)
 **Primary Goal**: Analyze current VM quota usage and availability zone restrictions across subscriptions
 
 - **Query-AzQuota.ps1** - Multi-threaded script that queries VM quota usage, availability zones, and regional restrictions
@@ -40,7 +40,7 @@ iwr "https://raw.githubusercontent.com/MSBrett/azcapman/main/scripts/quota/Query
 - Cross-subscription availability zone alignment planning
 - Capacity planning before large deployments
 
-### 💰 [Benefits Analysis](scripts/benefits/)
+### 💰 [Benefits Analysis](scripts/benefits/README)
 **Primary Goal**: Analyze compute usage patterns to identify Azure savings plan opportunities
 
 - **Get-BenefitRecommendations.ps1** - Queries Cost Management API for compute savings plan recommendations
@@ -132,4 +132,4 @@ The quota scripts produce CSV files with these key columns:
 
 ---
 
-Ready to understand your Azure quota utilization? Start with the [Quota Management](scripts/quota/) tools to analyze current usage and identify capacity constraints.
+Ready to understand your Azure quota utilization? Start with the [Quota Management](scripts/quota/README) tools to analyze current usage and identify capacity constraints.
