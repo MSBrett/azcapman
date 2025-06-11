@@ -41,8 +41,8 @@ New to Azure quota groups? Follow this learning path:
 Maintain a quarterly planning cadence to streamline quota management:
 - **Submit 90 days in advance** - Submit all requests at the start of each quarter for the next quarter.
 - **Buffer adequately** - Request your projected quarterly usage plus 30%.
+- **Set up alerts** - Configure [quota usage alerts](https://learn.microsoft.com/en-us/azure/quotas/how-to-guide-monitoring-alerting) at 70% threshold.
 - **Batch requests** - Submit quota and zonal access requests together.
-- **Track utilization** - Monitor trends to refine future projections.
 
 [Quota Groups](https://learn.microsoft.com/en-us/azure/quotas/quota-groups) enable self-service quota management across subscriptions, reducing the number of support transactions needed.
 

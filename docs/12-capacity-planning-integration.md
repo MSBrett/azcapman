@@ -38,12 +38,13 @@ The framework emphasizes:
 ## Recommended planning process
 
 ### 1. Monitor current usage
-Use [Azure Monitor](https://learn.microsoft.com/en-us/azure/well-architected/performance-efficiency/capacity-planning#azure-monitor) to:
+Use [Azure Quotas monitoring and alerting](https://learn.microsoft.com/en-us/azure/quotas/how-to-guide-monitoring-alerting) to:
 - Track quota utilization across all subscriptions in your group.
-- Identify usage patterns and growth trends.
-- Set up alerts for utilization thresholds.
+- Set up alerts for usage percentage thresholds.
+- Configure action groups to automate responses.
+- Query usage patterns with Azure Resource Graph.
 
-> "Azure Monitor enables you to collect and analyze telemetry data from your applications and infrastructure."
+Set up alerts at 70% utilization to ensure you have time to request increases before reaching limits.
 
 ### 2. Forecast future needs
 Apply forecasting techniques as recommended by Microsoft:
@@ -99,6 +100,23 @@ This buffer accounts for:
 
 ---
 
+## Setting up quota alerts
+
+Configure proactive monitoring using [Azure Quotas alerts](https://learn.microsoft.com/en-us/azure/quotas/how-to-guide-monitoring-alerting):
+
+1. **Navigate to Quotas** in the Azure portal and select "My Quotas."
+2. **Create alert rules** for each critical VM family:
+   - Set threshold at 70% usage.
+   - Choose appropriate severity level.
+   - Configure evaluation frequency (recommended: every 6 hours).
+3. **Configure action groups** to:
+   - Send email notifications to your capacity team.
+   - Trigger automated quota increase requests.
+   - Log to your ITSM system.
+4. **Use consistent settings**: Apply the same Resource Group and Managed Identity for all alert rules within a subscription.
+
+---
+
 ## Risk mitigation strategies
 
 ### Handle request uncertainties
@@ -120,9 +138,9 @@ Per [Microsoft's guidance](https://learn.microsoft.com/en-us/azure/quotas/quotas
 
 1. **Maintain quarterly rhythm** - Submit all requests once per quarter to reduce ticket overhead.
 2. **Apply 30% buffer** - Always request your projected quarterly usage plus 30%.
-3. **Batch requests** - Submit quota and access requests together to streamline processing.
-4. **Track patterns** - Use historical data to refine your quarterly projections.
-5. **Plan regionally** - Consider multi-region strategies to avoid capacity constraints.
+3. **Set up alerts** - Configure [quota usage alerts](https://learn.microsoft.com/en-us/azure/quotas/how-to-guide-monitoring-alerting) at 70% threshold.
+4. **Batch requests** - Submit quota and access requests together to streamline processing.
+5. **Track patterns** - Use Azure Resource Graph queries to analyze historical usage.
 
 ---
 

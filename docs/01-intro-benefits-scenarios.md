@@ -66,13 +66,14 @@ Adopt a quarterly planning cadence to manage quota efficiently:
 - Batch quota and regional/zonal access requests together.
 - Track actual usage to improve future forecasts.
 
-### Monitoring and forecasting
-Following [Microsoft's Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/performance-efficiency/capacity-planning) recommendations:
-- Use Azure Monitor to track quota utilization trends.
-- Analyze historical patterns to predict future demands.
-- Document capacity requirements as part of your architectural decisions.
+### Monitoring and alerting
+Use [Azure Quotas monitoring](https://learn.microsoft.com/en-us/azure/quotas/how-to-guide-monitoring-alerting) to:
+- Set up alerts for quota usage thresholds.
+- Configure action groups for automated responses.
+- Query usage patterns with Azure Resource Graph.
+- Track trends across all subscriptions in your Quota Group.
 
-As stated in the framework: "Azure Monitor enables you to collect and analyze telemetry data from your applications and infrastructure."
+Configure alerts at 70% utilization to ensure adequate time for requesting increases.
 
 ### Key considerations
 - **No automatic quota balancing**: You must manually transfer quota between subscriptions.

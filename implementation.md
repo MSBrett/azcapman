@@ -18,7 +18,7 @@ Establish a quarterly planning process before creating Quota Groups:
 - Submit all requests 90 days in advance.
 - Batch quota and access requests together.
 - Document your quota allocation strategy.
-- Configure monitoring for quota utilization tracking.
+- Configure quota usage alerts for proactive monitoring.
 - Review the [capacity planning integration guide](docs/12-capacity-planning-integration.html).
 
 > **Note**: Submit all requests 90 days in advance to avoid being overwhelmed with tickets and ensure timely processing.
