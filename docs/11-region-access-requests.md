@@ -12,6 +12,9 @@ Certain Azure regions require customers to go through a request process in order
 {: .important }
 > **Important for Quota Groups**: This process is essential for Quota Groups functionality. Quota Groups addresses quota management but does not address regional or zonal access. Quota transfers between subscriptions and deployments will fail unless regional and zonal access is provided on the subscription.
 
+{: .critical }
+> **No SLA for processing**: Region and availability zone access requests don't have guaranteed processing times or SLAs. Requests can take weeks to process depending on capacity availability and validation requirements. Plan these requests early in your capacity planning process, not when you urgently need capacity.
+
 ---
 
 ## Step 1: Create a new support request
@@ -154,6 +157,28 @@ In the details section of the request, add the SQL Data warehouse requirements w
 - [Create a support request](https://ms.portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/overview?DMC=troubleshoot)
 - [Azure community support](https://learn.microsoft.com/en-us/answers/products/azure?product=all)
 - [Azure feedback community](https://feedback.azure.com/d365community)
+
+---
+
+## Integration with Capacity Planning
+
+Given the lack of SLA for processing region and availability zone access requests, ISVs should:
+
+### Proactive planning recommendations
+1. **Forecast capacity needs** - Review your growth projections quarterly.
+2. **Submit requests 90 days in advance** - Allow ample time for processing with no guaranteed timeline.
+3. **Request access broadly** - Consider requesting access to zones you might need in the future.
+4. **Track request status** - Monitor support tickets regularly because there's no automatic notification.
+5. **Have contingency plans** - Be prepared for requests to be denied if capacity is limited.
+
+### Quarterly batch processing
+Align region access requests with your quarterly planning:
+- **Submit 90 days in advance**: Submit all requests at the start of each quarter for the next quarter.
+- **Batch processing**: Submit all region and zone requests together.
+- **Multiple subscriptions**: Process all subscriptions in parallel.
+- **Track through completion**: Monitor all requests until approved.
+
+As noted in [Microsoft's capacity planning guidance](https://learn.microsoft.com/en-us/azure/well-architected/performance-efficiency/capacity-planning): "Misjudged capacity planning can lead to over-provisioning or under-provisioning of resources."
 
 ---
 

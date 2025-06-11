@@ -51,3 +51,30 @@ The transfer of unused quota between subscriptions is done via Quota Group objec
 - Allocation: Transfer quota from group to target subscriptions
 - Submit Quota Group increase request for a given region and Virtual Machine (VM) family. Once your request's approved, transfer quota from group to target subscriptions
 - Quota Group increase requests are subject to the same checks as subscription quota increase requests. If capacity's low, then the request is rejected
+- According to [Microsoft's quota documentation](https://learn.microsoft.com/en-us/azure/quotas/quickstart-increase-quota-portal), quota requests have no guaranteed SLA and processing can take extended periods
+
+---
+
+## Proactive capacity planning best practices
+
+Azure Quota Groups work best when integrated into your regular capacity planning processes:
+
+### Quarterly planning approach
+Adopt a quarterly planning cadence to manage quota efficiently:
+- Submit all quota requests once per quarter to reduce ticket volume.
+- Calculate your quarterly needs plus a 30% buffer.
+- Batch quota and regional/zonal access requests together.
+- Track actual usage to improve future forecasts.
+
+### Monitoring and forecasting
+Following [Microsoft's Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/performance-efficiency/capacity-planning) recommendations:
+- Use Azure Monitor to track quota utilization trends.
+- Analyze historical patterns to predict future demands.
+- Document capacity requirements as part of your architectural decisions.
+
+As stated in the framework: "Azure Monitor enables you to collect and analyze telemetry data from your applications and infrastructure."
+
+### Key considerations
+- **No automatic quota balancing**: You must manually transfer quota between subscriptions.
+- **No guaranteed processing times**: Plan capacity requests early.
+- **Regional and zonal restrictions**: [Quota Groups don't solve for zonal restrictions](https://learn.microsoft.com/en-us/azure/quotas/quota-groups) - these require separate access requests.

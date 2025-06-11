@@ -36,6 +36,19 @@ New to Azure quota groups? Follow this learning path:
 {: .important }
 > **Note**: Quota Groups only support IaaS compute resources and require Enterprise Agreement, Microsoft Customer Agreement, or Internal subscriptions.
 
+## Quarterly capacity planning with Quota Groups
+
+Maintain a quarterly planning cadence to streamline quota management:
+- **Submit 90 days in advance** - Submit all requests at the start of each quarter for the next quarter.
+- **Buffer adequately** - Request your projected quarterly usage plus 30%.
+- **Batch requests** - Submit quota and zonal access requests together.
+- **Track utilization** - Monitor trends to refine future projections.
+
+[Quota Groups](https://learn.microsoft.com/en-us/azure/quotas/quota-groups) enable self-service quota management across subscriptions, reducing the number of support transactions needed.
+
+{: .warning }
+> **Important**: Quota requests don't have guaranteed processing times. Always submit requests 90 days in advance. See our [capacity planning integration guide](docs/12-capacity-planning-integration.html) for detailed planning strategies.
+
 ## Documentation sections
 
 ### 📚 [Getting Started](getting-started.html)
